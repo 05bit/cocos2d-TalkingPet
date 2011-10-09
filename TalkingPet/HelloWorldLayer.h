@@ -7,6 +7,9 @@
 //
 
 #import "cocos2d.h"
+#import "Aural.h"
+#import "IOSAudioManager.h"
+
 #import "AudioController.h"
 
 // HelloWorldLayer
@@ -15,9 +18,16 @@
     BOOL isRecording;
     CCNode *currentLabel;
     AudioController *audioController;
+    
+    aural::IOSAudioManager manager;
+	aural::AudioEnvironment *environment;
+	aural::AudioData *buffer;
+	aural::AudioEmitter *emitter;
 }
 
 // returns a CCScene that contains the HelloWorldLayer as the only child
 +(CCScene *) scene;
+
+- (void)switchLabel:(NSUInteger)tag;
 
 @end

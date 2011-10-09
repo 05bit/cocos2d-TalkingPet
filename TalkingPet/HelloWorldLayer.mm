@@ -6,8 +6,9 @@
 //  Copyright 05Bit 2011. All rights reserved.
 //
 
+#import "OALAudioSession.h"
+#import "OALTools.h"
 
-// Import the interfaces
 #import "HelloWorldLayer.h"
 
 enum HelloWorldObjects {
@@ -75,6 +76,13 @@ enum HelloWorldObjects {
         
         audioController = [[AudioController alloc] init];
         [audioController initAudioController];
+
+        // Aural
+        
+        [OALAudioSession sharedInstance];
+        environment = manager.newEnvironment();
+        environment->setSampleRate(44100);
+        emitter = environment->newEmitter();
 	}
 	return self;
 }
@@ -85,13 +93,32 @@ enum HelloWorldObjects {
     
     if (!isRecording) {
         isRecording = YES;
+        [self switchLabel:kSaySomethingTag];
         [audioController record];
     } else {
         isRecording = NO;
-        [audioController stopRecording];
+        [self switchLabel:kPlayingTag];
+        //[audioController stopRecording];
+        
+//        if (buffer) {
+//            emitter->stop();
+//            delete buffer;
+//        }
+        buffer = [KSAudioFile audioDataWithUrl:audioController.recordedTmpFile stereo:NO];
+        emitter->setAudioData(buffer);
+        emitter->setPitch(0.6);
+        emitter->play();
+
     }
     
     return NO;
+}
+
+- (void)switchLabel:(NSUInteger)tag
+{
+    currentLabel.visible = NO;
+    currentLabel = [self getChildByTag:tag];
+    currentLabel.visible = YES;
 }
 
 - (void) dealloc
